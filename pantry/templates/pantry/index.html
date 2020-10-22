@@ -1,0 +1,146 @@
+{% extends 'pantry/basic.html' %}
+{% block css %}
+          .col-md-3
+          {
+          display: inline-block;
+          margin-left:-4px;
+		  }
+		  
+          .carousel-indicators .active {
+			  background-color: blue;
+            }
+          
+			
+			.col-md-3 img{
+				
+				width: 255px;
+				height: 355px;
+			}
+			
+			body .carousel-indicator li{
+				background-color: blue;
+			}
+			
+			body .carousel-indicators{
+				bottom: 0;
+			}
+			
+			body .carousel-control-prev-icon,
+			body .carousel-control-next-icon{
+				background-color: blue;
+			}
+			body .no-padding{
+				padding-left: 0,
+				padding-right: 0;
+			}
+			
+			.col-md-3 img {
+				width: 255px;
+				height: 255px;
+      }
+
+      .carousel-inner img {
+        width : 400px;
+        height :320px;
+      }
+      .card-img-top {
+        height:200px;
+      }
+      .carousel-control-next, .carousel-control-prev {
+
+        top : auto;
+        bottom : auto ;
+      }
+      body .carousel-control-prev-icon, body .carousel-control-next-icon {
+        background-color: blue;
+        margin-top: 222px;
+    }
+    
+
+			{% endblock %}
+			
+{% block body %}
+{% load static %}
+<div class = "container mt-5">
+<div id="carouselExampleCaptions" class="carousel slide" data-ride="carousel">
+  <ol class="carousel-indicators">
+    <li data-target="#carouselExampleCaptions" data-slide-to="0" class="active"></li>
+    <li data-target="#carouselExampleCaptions" data-slide-to="1"></li>
+    <li data-target="#carouselExampleCaptions" data-slide-to="2"></li>
+  </ol>
+  <div class="carousel-inner mb-4">
+    <div class="carousel-item active">
+      <img src='https://www.marcheleos.com/media/wysiwyg/infortis/ultimo/slideshow/wide01.jpg' class="img-fluid w-100" alt="...">
+    </div>
+    <div class="carousel-item">
+      <img src='https://cdn.eventfinda.co.nz/uploads/events/transformed/1089370-490454-34.png' class="img-fluid w-100" alt="...">
+      
+    </div>
+    <div class="carousel-item">
+      <img src='https://www.lafamilia-grocery.com/02f0a56ef46d93f03c90-22ac5f107621879d5667e0d7ed595bdb.ssl.cf2.rackcdn.com/sites/16719/photos/402795/La-Familia-Grocery-Slide-220171227-2376-130gwed_960x435.png' class="img-fluid w-100" alt="...">
+    </div>
+  </div>
+  
+  
+</div>
+</div>
+  <br><br><br>
+
+  
+    {% for cat, product in list %}
+          {% if cat == 'Food Grains' or cat == 'Dals and Pulses' or cat == 'Oils, Ghee and Masalas' or cat == 'Salt, Sugar and Jaggery' %}
+          <div class="text-nowrap bd-highlight col">
+            <h4><b>{{cat}}</b></h4>
+          </div>
+          
+
+    <div class = "container mt-4">
+      <div class="row">
+          {% for i in product %}
+          <div class="col-sm-4">
+              <div class="card-group" >
+              
+              <a href = "productview/{{i.p_name}}/"><img class="card-img-top" src="/media/{{i.image}}" alt="Card image cap"></a>
+              <div class="card-body">
+                  <h5 class="card-title">{{i.p_name}}</h5>
+                  
+              </div>
+            </div>
+          </div>
+          {% if forloop.counter|divisibleby:3 and forloop.counter > 0 and not forloop.last %}
+              </div><div class = "row">
+          {% endif %}
+      {% endfor %}
+              </div>
+          </div>
+    {% endif %}
+    {% endfor %}
+  
+  <br><br><br>
+
+  {% endblock %}
+{% block js %} 
+<script>
+
+    if(localStorage.getItem('cart') == null) {
+      var cart = {}
+    }
+    else {
+      cart = JSON.parse(localStorage.getItem('cart'));
+    }
+    $('.cart').click(function(){
+      console.log('clicked')
+      var idstr = this.id.toString();
+      console.log(idstr)
+      if(cart[idstr] != undefined) {
+        cart[idstr]++;
+      }
+      else {
+        cart[idstr] = 1;
+      }
+      console.log(cart);
+      localStorage.setItem('cart', JSON.stringify(cart));
+    });
+    
+</script>
+{% endblock %}

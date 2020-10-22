@@ -15,8 +15,6 @@ class Product(models.Model):
 class Product_category(models.Model):
     category = models.ForeignKey('Product', on_delete = models.CASCADE, default=None)
     subcategory = models.CharField(max_length=300, default = '')
-    def __str__(self):
-        return self.category
 
 class Cart(models.Model):
     cart_id = models.AutoField(primary_key = True)
@@ -28,6 +26,8 @@ class Cart(models.Model):
 class Cart_item(models.Model):
     cart_id = models.ForeignKey('Cart', on_delete = models.CASCADE, default=None)
     p_id = models.ForeignKey('Product', on_delete = models.CASCADE, default=None)
+    prod_quantity = models.IntegerField(default=1)
+
 
 class Order(models.Model):
     order_id = models.AutoField(primary_key = True)

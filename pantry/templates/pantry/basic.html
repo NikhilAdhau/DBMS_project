@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<!-- Required meta tags -->
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<link rel="shortcut icon" href="/media/shop/images/favorite-cart.png" type="image/x-icon">
+	<!-- Bootstrap CSS -->
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+		integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+		<!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"> -->
+
+
+	<title>{% block title %}TheStockedPantry, Home{% endblock %}</title>
+	<style>
+		.nav-link {
+			display: inline-block; 
+			
+		}
+		.footer {
+			background:#f1f1f1;
+			text-align:center;
+			width:100%;
+			font-weight:bold;
+			color:brown;
+			margin-top: 20px;
+			
+		}
+		.overlay {
+			height: 100%;
+			width: 0;
+			position: fixed;
+			z-index: 1;
+			top: 0;
+			left: 0;
+			background-color: rgb(0,0,0);
+			background-color: rgba(0,0,0, 0.9);
+			overflow-x: hidden;
+			transition: 0.5s;
+		  }
+		  
+		  .overlay-content {
+			position: relative;
+			top: 0%;
+			width: 100%;
+			text-align: center;
+			font-size:0.8rem
+		  }
+		  
+		  .overlay a {
+			padding: 8px;
+			text-decoration: none;
+			font-size: 1.5rem;
+			color: #818181;
+			display: block;
+			transition: 0.3s;
+		  }
+		  
+		  .overlay a:hover, .overlay a:focus {
+			color:white;
+			text-shadow: red 1rem;
+		  }
+		  
+		  .overlay .closebtn {
+			position: absolute;
+			top: 20px;
+			right: 45px;
+			font-size: 60px;
+		  }
+		  
+		  @media screen and (max-height: 450px) {
+			.overlay a {font-size: 20px}
+			.overlay .closebtn {
+			font-size: 40px;
+			top: 15px;
+			right: 35px;
+			}
+		  }
+		
+		
+		
+		
+		{% block css %}
+		
+		
+		{% endblock %}</style>
+</head>
+
+<body>
+	{% load static %}
+	<nav class="navbar navbar-expand-lg bg-dark navbar-inverse navbar-dark">
+		<span class="m-1" style="font-size:1.5rem;cursor:pointer;color:#f1f1f1" onclick="openNav()">&#9776;</span>
+		<span>&nbsp;</span>
+		<a class="navbar-brand" href="{% url 'home' %}">The Stocked Pantry</a>
+		
+		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+		aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+		<span class="navbar-toggler-icon"></span>
+	</button>
+	
+	<div class="collapse navbar-collapse" id="navbarSupportedContent">
+		<ul class="navbar-nav mr-auto">
+<!--			<li class="nav-item active">-->
+<!--				<a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>-->
+<!--			</li>-->
+
+			<li class="nav-item dropdown">
+				<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+				data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+				Categories
+			</a>
+			<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+				<a class="dropdown-item" href="#">Grocery</a>
+				<a class="dropdown-item" href="#">Vegetables</a>
+<!--				<div class="dropdown-divider"></div>-->
+				<a class="dropdown-item" href="#">Fruits</a>
+			</div>
+		</li>
+		
+	
+	<form  action = "/search_results" class="form-inline my-2 my-lg-0"  method = "GET"> 
+		<input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name = "Search">
+		<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+	</form>
+	</ul>
+<!--	<div class="nav-item " style = "margin-right:300px;">-->
+<!--		<a class="nav-link" href="#">Cart</a>-->
+<!--	</div>-->
+
+		{% if user.is_authenticated %}
+
+		<div class="nav-item ">
+			<a class="nav-link" href="#"><img class="rounded-circle article-img" src="{{ request.user.profile.image.url }}" style="width:25px;"></a></div>
+
+		<div class="nav-item ">
+			<a class="nav-link btn btn-default btn-sm" style="color:white;font-size:medium"  href="#">
+				Cart<i class='fas fa-cart-arrow-down'></i>({{cart}})
+			  </a>
+		</div>
+		<div class="nav-item " style = "margin-right:50px;" >
+			<a href="{% url 'LogOut' %}"><button type="button" class="btn btn-primary">
+                Log Out
+              </button></a>
+		</div>
+		{% else %}
+		<div class="nav-item " >
+			<button type="button" class="btn btn-primary mr-3" data-toggle="modal" data-target="#loginModal">
+                Log In
+            </button>
+		</div>
+		<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#signupModal">
+            Sign Up
+          </button>
+		{% endif %}
+	
+</div>
+</nav>
+<!-- This is the sidebar portion -->
+
+<div id="myNav" class="overlay" style="background:black;color:blue">
+	
+	<div class="overlay-content">
+		<span class="" style="font-size:1.5rem;cursor:pointer;color:#f1f1f1;position:absolute;left:9%;top:5%;" onclick="closeNav()">&#9776;</span>
+		{% if user.is_authenticated %}	
+		<a  href="#"><img class="rounded-circle article-img" src="#" id="img" style="width:40px;"><b><small>&nbsp; {{request.user}}</small></b></a>
+		{% endif %}
+	  <a href="$">About</a>
+	  <a href="#">Wishlist</a>
+	  <a href="#">My Orders</a>
+	  <a href="https://node-red-hpdbp.mybluemix.net/ui/">Our Assistant</a>
+	</div>
+  </div>
+
+
+  <div class="modal fade" id="signupModal" tabindex="-1" role="dialog" aria-labelledby="signupModal" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="signupModaltitle">Modal title</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form  action='/signup' method = 'POST'>
+            {% csrf_token %}
+            <div class="form-group">
+              <label for="uname">Username</label>
+              <input type="text" class="form-control" name="uname" aria-describedby="emailHelp" required>
+            </div>
+            <div class="form-group">
+              <label for="fname">First Name</label>
+              <input type="text" class="form-control" name="fname"aria-describedby="emailHelp" required>
+            </div>
+            <div class="form-group">
+              <label for="lname">Last Name</label>
+              <input type="text" class="form-control" name="lname"aria-describedby="emailHelp" required>
+            </div>
+            <div class="form-group">
+              <label for="email">Email address</label>
+              <input type="email" class="form-control" name="email" id="exampleInputEmail1" aria-describedby="emailHelp" required>
+            </div>
+            <div class="form-group">
+              <label for="pass1">Password</label>
+              <input type="password" class="form-control" name="pass1" id="exampleInputPassword1" required>
+            </div>
+            <div class="form-group">
+              <label for="pass2">Re-enter your Password</label>
+              <input type="password" class="form-control" name="pass2"id="exampleInputPassword1" required>
+            </div>
+            
+            <button type="submit" class="btn btn-primary">Sign Up</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </form>
+        </div>
+  
+        <div class="modal-footer">
+          <small class="text-muted">
+            Already have an Account?<a href = "#loginModal" data-dismiss="modal" data-toggle="modal" data-target="#loginModal">Log In</a>
+          </small>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Button trigger Sign Up modal -->
+  
+  <!--Sign Up Modal -->
+  <div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModal" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="loginModaltitle">Log In</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form action="/login" method = "POST">
+            {% csrf_token %}
+            <div class="form-group">
+              <label for="loginuname">Username</label>
+              <input type="text" name="loginuname" class="form-control" aria-describedby="emailHelp" required>
+            </div>
+            <div class="form-group">
+              <label for="loginpass">Enter Your Password</label>
+              <input type="password" name="loginpass" class="form-control" id="exampleInputPassword1" required>
+            </div>
+            
+            <button type="submit" class="btn btn-primary">Log In</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </form>
+          
+        </div>
+  
+        <div class="modal-footer">
+          <small class="text-muted">
+            Need an Account?<a href = "#signupModal" data-dismiss="modal" data-toggle="modal" data-target="#signupModal">Sign Up</a>
+          </small>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+function openNav() {
+
+	if(window.screen.width < 1080) {
+		document.getElementById("myNav").style.width = "100%";
+	}
+	else {
+		document.getElementById("myNav").style.width = "20%";
+	}
+}
+
+function closeNav() {
+  document.getElementById("myNav").style.width = "0%";
+}
+</script>
+
+
+
+
+
+
+
+<!-- sidebar portion ends -->
+
+
+
+
+
+
+
+
+
+
+		{% if messages %}
+			<div style="border: 1px solid black; width:50%; margin-left:25%; margin-left:25%; padding:10px; margin-top:20px; background-color: rgba(21, 151, 0, 1); color: rgb(255, 255, 255);">
+                {% for message in messages %}
+                    {{ message }}
+                {% endfor %}</div>
+		{% endif %}
+
+{% block body %}
+{% endblock %}
+
+
+{% block rest %}{% endblock %}
+<div class="footer">
+	<p>TheStockedPantry 2020 &copy;</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	<!-- Optional JavaScript -->
+	<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+		integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+		crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"
+		integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut"
+		crossorigin="anonymous"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"
+		integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k"
+		crossorigin="anonymous"></script>
+		<script src='https://kit.fontawesome.com/a076d05399.js'></script>
+</body>
+	{% block js %} {% endblock %}
+</html>
