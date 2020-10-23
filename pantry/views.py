@@ -11,6 +11,7 @@ from django.contrib import messages
 #from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, logout, authenticate
+from django.http import HttpResponseRedirect
 # Create your views here.
 
 
@@ -128,8 +129,8 @@ def cart(request, idz, typer):
         print(cart4)
         if len(cartprod) == 0:
             cart1 = Cart_item()
-            cart1.cart_id = cart4[0].cart_id
-            cart1.p_id = idz
+            cart1.cart_id = Cart.objects.get(user = request.user)
+            cart1.p_id = Product.objects.get(p_id = idz)
             cart1.prod_quantity = 1
             cart1.save()
         else:
@@ -156,7 +157,7 @@ def cart(request, idz, typer):
             price = Product.objects.get(p_id = car.p_id).price
             sum1 = sum1 + price * car.prod_quantity
         return render(request, 'pantry/cart.html', {'cart1': cart3, 'sum': sum1, 'cart':len(cart3 = Cart_item.objects.filter(cart2[0].cart_id))})
-    return redirect('home')
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 @login_required
 def wishlist(request, idz, typer):

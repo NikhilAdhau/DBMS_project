@@ -20,11 +20,11 @@ class Cart(models.Model):
     cart_id = models.AutoField(primary_key = True)
     user = models.ForeignKey(User, on_delete = models.CASCADE, default=None)
     total_cost = models.IntegerField(default = 0)
-    
+
 class Cart_item(models.Model):
     cart_id = models.ForeignKey('Cart', on_delete = models.CASCADE, default=None)
     p_id = models.ForeignKey('Product', on_delete = models.CASCADE, default=None)
-    prod_quantity = models.IntegerField(default=1)
+    prod_quantity = models.IntegerField(default = 1)
 
 
 class Order(models.Model):
