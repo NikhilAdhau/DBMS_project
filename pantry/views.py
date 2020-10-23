@@ -106,58 +106,60 @@ def productview(request, cat):
 	for i in product:
 		if cat == i.category:
 			a.append(i)
-
-	# setx = {item['category'] for item in product}
-	# for ele in setx:
-	# 	element = request.GET[ele]
-	# 	if(element is not None):
-	# 		list1 = Product.objects.filter(element)
-	# 		break
 	
 	return render(request, 'pantry/productview.html', {'list': a, 'cart': carx})
 
 @login_required
-def cart(request, idz, typer, quant):
-	mode = str(typer)
-	id1 = int(idz)
-	if mode == 'add':
-		cart4 = Cart.objects.filter(user=request.user)
-		if len(cart4) == 0:
-			cart1 = Cart()
-			cart1.user = request.user
-			total_cost = 0
-			cart1.save()
-			cart4 = cart1
-		wish4 = Wishlist.objects.filter(product_id=id1, user=request.user)
-		cartprod = Cart.objects.filter(p_id = idz, user=request.user)
-		if not cartprod:
-			cart1 = Cart_item()
-			cart1.cart_id = cart4.cart_id
-			cart1.p_id = idz
-			cart1.quantity = 1
-			cart1.save()
-		else:
-			cart1 = Cart_item.objects.get(p_id = idz)
-			cart1.prod_quantity = cart1.prod_quantity + 1
-			cart1.save()
-
-		if wish4:
-			wish4.delete()
-	elif mode == 'delete':
-		cart3 = Cart.objects.filter(product_id=id1).first()
-		if cart3:
-			cart3.delete()
-	elif mode == 'none':
-		print('none')
-		cart2 = Cart.objects.filter(user=request.user)
-		sum1 = 0
-		for car in cart2:
-			sum1 = sum1 + car.price * car.quantity
-		return render(request, 'pantry/cart.html', {'cart1': cart2, 'sum': sum1, 'cart':len(Cart.objects.filter(user=request.user))})
-	return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+def cart(request, idz, typer):
+    mode = str(typer)
+    id1 = int(idz)
+    if mode == 'add':
+        cart4 = Cart.objects.filter(user=request.user)
+        print(cart4)
+        if len(cart4) == 0:
+            cart1 = Cart()
+            cart1.user = request.user
+            total_cost = 0
+            cart1.save()
+            cart4 = Cart.objects.filter(user = request.user)
+        #wish4 = Wishlist.objects.filter(product_id=id1, user=request.user)
+        cartprod = Cart_item.objects.filter(p_id = idz, cart_id = cart4[0].cart_id)
+        print("\n\n\n\Manish\n\n\n\n\n\n\\n\n")
+        print(cart4)
+        if len(cartprod) == 0:
+            cart1 = Cart_item()
+            cart1.cart_id = cart4[0].cart_id
+            cart1.p_id = idz
+            cart1.prod_quantity = 1
+            cart1.save()
+        else:
+            cart1 = Cart_item.objects.filter(p_id = idz)
+            print(cart1)
+            print("\n\n\n\\n\n\n\n\n\n\\n\n")
+            #cart1.update(cart1.prod_quantity = cart1.prod_quantity + 1)
+        #print("I am in add")
+        #if wish4:
+        #	wish4.delete()
+        print("\n\n\n\\n\n\n\n\n\n\\n\n")
+    elif mode == 'delete':
+        cart2 = Cart.objects.get(user =request.user)
+        if cart2:
+            cart3 = Cart_item.objects.filter(p_id=id1,cart_id = cart[0].cart_id)
+        if cart3:
+            cart3.delete()
+    elif mode == 'none':
+        cart2 = Cart.objects.filter(user=request.user)
+        if cart2:
+            cart3 = Cart_item.objects.filter(cart2[0].cart_id)
+        sum1 = 0
+        for car in cart3:
+            price = Product.objects.get(p_id = car.p_id).price
+            sum1 = sum1 + price * car.prod_quantity
+        return render(request, 'pantry/cart.html', {'cart1': cart3, 'sum': sum1, 'cart':len(cart3 = Cart_item.objects.filter(cart2[0].cart_id))})
+    return redirect('home')
 
 @login_required
-def wishlist(request, idz, typer, quant):
+def wishlist(request, idz, typer):
     mode = str(typer)
     id1 = int(idz)
     if mode == 'add':
@@ -188,6 +190,8 @@ def wishlist(request, idz, typer, quant):
         cart2 = Wishlist.objects.filter(user=request.user)
         return render(request, 'pantry/wishlist.html', {'cart1': cart2, 'cart':len(Cart.objects.filter(user=request.user))})
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+
 """
 def grocery(request):
 	if(request.user.is_authenticated):

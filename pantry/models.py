@@ -20,9 +20,7 @@ class Cart(models.Model):
     cart_id = models.AutoField(primary_key = True)
     user = models.ForeignKey(User, on_delete = models.CASCADE, default=None)
     total_cost = models.IntegerField(default = 0)
-    def __str__(self):
-        return self.cart_id
-
+    
 class Cart_item(models.Model):
     cart_id = models.ForeignKey('Cart', on_delete = models.CASCADE, default=None)
     p_id = models.ForeignKey('Product', on_delete = models.CASCADE, default=None)

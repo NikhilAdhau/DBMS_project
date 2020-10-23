@@ -9,8 +9,8 @@ urlpatterns = [
     path('logout', views.Logout, name='LogOut'),
     path('signup', views.Signup, name='signup'),
     path('login', views.Login, name='login'),
-    path('cart/<int:idz>/<str:typer>/<int:quant/', views.cart, name='cart'),
-    path('wishlist/<int:idz>/<str:typer>/<int:quant>/', views.wishlist, name='wishlist'),
+    path('cart/<int:idz>/<str:typer>/', views.cart, name='cart'),
+    path('wishlist/<int:idz>/<str:typer>/<int:quant>', views.wishlist, name='wishlist'),
 ]
 
 """ path('grocery/', views.grocery, name = 'Grocery'),
