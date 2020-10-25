@@ -134,7 +134,7 @@
 			<a class="nav-link" href="#"><img class="rounded-circle article-img" src="{{ request.user.profile.image.url }}" style="width:25px;"></a></div>
 
 		<div class="nav-item ">
-			<a class="nav-link btn btn-default btn-sm" style="color:white;font-size:medium"  href="#">
+			<a class="nav-link btn btn-default btn-sm" style="color:white;font-size:medium"  href="{% url 'cart' idz=0 typer='none2' %}">
 				Cart<i class='fas fa-cart-arrow-down'></i>({{cart}})
 			  </a>
 		</div>

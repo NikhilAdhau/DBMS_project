@@ -21,12 +21,12 @@
           <div class="col-sm-4">
           <div class="card-group" >
          
-            <img class="card-img-top" src="/media/{{cart.image}}" alt="Card image cap">
+            <img class="card-img-top" src="#" alt="Card image cap">
         <div class="card-body">
           <h5 class="card-title">{{cart.product_name}}</h5>
             <p class="card-text">Price - ₹ {{cart.price}}/kg</p>
             <p class="card-text">Quantity - {{cart.quantity}} kg</p>
-    <a href="{% url 'cart' idz=cart.product_id typer='delete' %}" class="btn btn-primary">Remove from Cart</a>
+    <a href="{% url 'cart' idz=cart.p_id.p_id typer='delete' %}" class="btn btn-primary">Remove from Cart</a>
 
         </div>
       </div>
@@ -46,7 +46,7 @@
     </div>
         <div class="text-sm-center mt-5">
           
-          <a href="{% url 'order' %}" class="btn btn-success my-5" style = "width : 250px;">Place Order</a>
+          <a href="#" class="btn btn-success my-5" style = "width : 250px;">Place Order</a>
     {% else %}
         <h4 class="text-sm-center mt-5">Cart is empty</h4>
     {% endif %}
@@ -57,9 +57,6 @@
         
         </div>
 
-        <script>
-          document.getElementById
-        </script>
 
 
 {% endblock %}

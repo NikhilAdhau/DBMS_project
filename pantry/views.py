@@ -112,8 +112,11 @@ def productview(request, cat):
 
 @login_required
 def cart(request, idz, typer):
+    
     mode = str(typer)
     id1 = int(idz)
+    print("\n\n\\n\n\n\n" + mode + "\n\nn\n\n\n\n\n")
+    print(mode)
     if mode == 'add':
         cart4 = Cart.objects.filter(user=request.user)
         print(cart4)
@@ -148,16 +151,20 @@ def cart(request, idz, typer):
             cart3 = Cart_item.objects.filter(p_id=id1,cart_id = cart[0].cart_id)
         if cart3:
             cart3.delete()
-    elif mode == 'none':
-        cart2 = Cart.objects.filter(user=request.user)
+    elif mode == 'none2':
+        print("\n\n\\n\n\n\I am in none2\n\nn\n\n\n\n\n")
+        cart2 = Cart.objects.get(user=request.user)
         if cart2:
-            cart3 = Cart_item.objects.filter(cart2[0].cart_id)
+            cart3 = Cart_item.objects.filter(cart_id = cart2.cart_id)
         sum1 = 0
         for car in cart3:
-            price = Product.objects.get(p_id = car.p_id).price
+            #print(Product.objects.get(p_id = car.p_id.p_id).price
+            price = Product.objects.get(p_id = car.p_id.p_id).price
             sum1 = sum1 + price * car.prod_quantity
-        return render(request, 'pantry/cart.html', {'cart1': cart3, 'sum': sum1, 'cart':len(cart3 = Cart_item.objects.filter(cart2[0].cart_id))})
-    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+        cart2.total_cost = sum1
+        return render(request, 'pantry/cart.html', {'cart1': cart3, 'sum': sum1, 'cart':len(cart3)})
+    #return render(request, 'pantry/productview.html', {'prod_id': Cart_item.objects.filter(cart_id = Cart.objects.get(user = request.user))})
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'), {'prod_id': Cart_item.objects.filter(cart_id = Cart.objects.get(user = request.user))})
 
 @login_required
 def wishlist(request, idz, typer):
