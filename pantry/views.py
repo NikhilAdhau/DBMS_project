@@ -148,7 +148,8 @@ def cart(request, idz, typer):
     elif mode == 'delete':
         cart2 = Cart.objects.get(user =request.user)
         if cart2:
-            cart3 = Cart_item.objects.filter(p_id=id1,cart_id = cart[0].cart_id)
+            #cart3 = Cart_item.objects.filter(p_id=id1,cart_id = cart[0].cart_id)
+            cart3 = Cart_item.objects.get(p_id = id1)
         if cart3:
             cart3.delete()
     elif mode == 'none2':
