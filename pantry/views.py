@@ -157,12 +157,15 @@ def cart(request, idz, typer):
         if cart2:
             cart3 = Cart_item.objects.filter(cart_id = cart2.cart_id)
         sum1 = 0
+        product = []
         for car in cart3:
             #print(Product.objects.get(p_id = car.p_id.p_id).price
+            product.append(Product.objects.get(p_id = car.p_id.p_id))
             price = Product.objects.get(p_id = car.p_id.p_id).price
             sum1 = sum1 + price * car.prod_quantity
         cart2.total_cost = sum1
-        return render(request, 'pantry/cart.html', {'cart1': cart3, 'sum': sum1, 'cart':len(cart3)})
+        cart3 = zip(product, cart3)
+        return render(request, 'pantry/cart.html', {'cart1': cart3, 'sum': sum1, 'cart':len(Cart_item.objects.filter(cart_id = cart2.cart_id))})
     #return render(request, 'pantry/productview.html', {'prod_id': Cart_item.objects.filter(cart_id = Cart.objects.get(user = request.user))})
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'), {'prod_id': Cart_item.objects.filter(cart_id = Cart.objects.get(user = request.user))})
 
