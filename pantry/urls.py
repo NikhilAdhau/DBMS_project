@@ -10,7 +10,9 @@ urlpatterns = [
     path('signup', views.Signup, name='signup'),
     path('login', views.Login, name='login'),
     path('cart/<int:idz>/<str:typer>/', views.cart, name='cart'),
-    path('wishlist/<int:idz>/<str:typer>/<int:quant>', views.wishlist, name='wishlist'),
+    path('update_cart/<int:idz>/<str:typer>/', views.update_cart, name='update_cart'),
+    path('wishlist/<int:idz>/<str:typer>/', views.wishlist, name='wishlist'),
+    path('update_wishlist/<int:idz>/<str:typer>/', views.update_wishlist, name='update_wishlist')
 ]
 
 """ path('grocery/', views.grocery, name = 'Grocery'),
@@ -34,7 +36,6 @@ urlpatterns = [
 	path('productview/<str:cat>/', views.productview, name = 'ProductView'),
 	path('order/', views.order, name = 'order'),
      path('admin/', admin.site.urls),
-    path('wishlist/<int:idz>/<str:typer>/<int:quant>/', user_views.wishlist, name='wishlist'),
     path('cart/<int:idz>/<str:typer>/<int:quant>/', user_views.cart, name='cart'),
     path('orders/', user_views.history, name='history'),
     path('profile/', user_views.profile, name='profile'),

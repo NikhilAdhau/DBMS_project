@@ -131,8 +131,13 @@
 		{% if user.is_authenticated %}
 
 		<div class="nav-item ">
-			<a class="nav-link" href="#"><img class="rounded-circle article-img" src="{{ request.user.profile.image.url }}" style="width:25px;"></a></div>
-
+			<a class="nav-link" href="#"><img class="rounded-circle article-img" src="{{ request.user.profile.image.url }}" style="width:25px;"></a>
+		</div>
+		<div class="nav-item ">
+			<a class="nav-link btn btn-default btn-sm" style="color:white;font-size:medium"  href="{% url 'wishlist' idz=0 typer='none2' %}">
+				Wishlist<i class='fas fa-cart-arrow-down'></i>({{cart}})
+			  </a>
+		</div>
 		<div class="nav-item ">
 			<a class="nav-link btn btn-default btn-sm" style="color:white;font-size:medium"  href="{% url 'cart' idz=0 typer='none2' %}">
 				Cart<i class='fas fa-cart-arrow-down'></i>({{cart}})
@@ -166,7 +171,7 @@
 		<a  href="#"><img class="rounded-circle article-img" src="#" id="img" style="width:40px;"><b><small>&nbsp; {{request.user}}</small></b></a>
 		{% endif %}
 	  <a href="$">About</a>
-	  <a href="#">Wishlist</a>
+	  <!-- <a href="#">Wishlist</a> -->
 	  <a href="#">My Orders</a>
 	  <a href="https://node-red-hpdbp.mybluemix.net/ui/">Our Assistant</a>
 	</div>

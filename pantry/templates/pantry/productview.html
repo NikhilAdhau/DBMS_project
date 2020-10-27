@@ -32,8 +32,8 @@
           {% endfor %}
       {% else %}
       <h2>fjkdjf</h2>
-        <a href="{% url 'cart' idz=i.p_id typer='add' %}" class="btn btn-primary">Add to Cart</a>
-        <a href="{% url 'wishlist' idz=i.p_id typer='add' quant=0 %}" class="btn btn-primary">Add to Wishlist</a>
+        <a href="{% url 'update_cart' idz=i.p_id typer='add' %}" class="btn btn-primary">Add to Cart</a>
+        <a href="{% url 'update_wishlist' idz=i.p_id typer='add'%}" class="btn btn-primary">Add to Wishlist</a>
 			{% endif %}
         </div>
       </div>
