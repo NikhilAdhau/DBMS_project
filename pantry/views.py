@@ -12,8 +12,10 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, logout, authenticate
 from django.http import HttpResponseRedirect
-# Create your views here.
+from django.views.decorators.csrf import csrf_exempt
+from PayTm import Checksum
 
+MERCHANT_KEY = 'Yjvvna94261309762207'
 
 def index(request):
 	allProds = []
@@ -172,13 +174,14 @@ def cart(request,idz, typer):
     if cart:
         cart_qs = Cart_item.objects.filter(cart_id = cart.cart_id)
     sum1 = 0
+    product = []
     for car in cart_qs:
-            #print(Product.objects.get(p_id = car.p_id.p_id).price
+        product.append(Product.objects.get(p_id = car.p_id.p_id))
         price = Product.objects.get(p_id = car.p_id.p_id).price
         sum1 = sum1 + price * car.prod_quantity
         cart.total_cost = sum1
-
-    return render(request, 'pantry/cart.html', {'cart1': cart_qs, 'sum' : sum1})
+    cart_qs = zip(product, cart_qs)
+    return render(request, 'pantry/cart.html', {'cart1': cart_qs, 'sum' : sum1, 'cart':len(Cart_item.objects.filter(cart_id = cart.cart_id))})
 
 def update_cart(request, idz, typer):
     mode = str(typer)
@@ -194,18 +197,22 @@ def update_cart(request, idz, typer):
     if mode == 'add':
         pass
     elif mode == 'delete':
+        print("\n\n\n\n\\n\n\n\n\nn\n\n\n\n")
         cart_item.delete()
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     #
 #
 @login_required
 def wishlist(request, idz, typer):
-    wishlist = Wishlist.objects.get(user = request.user)
-    if wishlist:
-        wishlist_qs = Wishlist_item.objects.filter(wishlist_id = wishlist.wishlist_id)
-    
-    return render(request, 'pantry/wishlist.html', {'cart1': wishlist_qs})
-
+    wishlist = Wishlist.objects.filter(user = request.user)
+    product = []
+    if len(wishlist):
+        wishlist_qs = Wishlist_item.objects.filter(wishlist_id = wishlist[0])
+        for i in wishlist_qs:
+            product.append(Product.objects.get(p_id = i.p_id.p_id))
+        wishlist_qs = zip(product, wishlist_qs)
+        return render(request, 'pantry/wishlist.html', {'cart1': wishlist_qs})
+    return render(request, 'pantry/wishlist.html')
 @login_required
 def update_wishlist(request, idz, typer):
     # mode = str(typer)
@@ -305,7 +312,60 @@ def update_wishlist(request, idz, typer):
     # #return render(request, 'pantry/productview.html', {'prod_id': Cart_item.objects.filter(cart_id = Cart.objects.get(user = request.user))})
     # return HttpResponseRedirect(request.META.get('HTTP_REFERER'), {'prod_id': Wishlist_item.objects.filter(cart_id = Wishlist.objects.get(user = request.user))})
 
+def checkout(request):
+    if request.method=="POST":
+        items_json = request.POST.get('itemsJson', '')
+        name = request.POST.get('name', '')
+        amount = request.POST.get('amount', '')
+        email = request.POST.get('email', '')
+        address = request.POST.get('address1', '') + " " + request.POST.get('address2', '')
+        city = request.POST.get('city', '')
+        state = request.POST.get('state', '')
+        zip_code = request.POST.get('zip_code', '')
+        phone = request.POST.get('phone', '')
+        #order = Orders(items_json=items_json, name=name, email=email, address=address, city=city, state=state, zip_code=zip_code, phone=phone, amount=amount)
+        #order.save()
+        #update = OrderUpdate(order_id=order.order_id, update_desc="The order has been placed")
+        #update.save()
+        #thank = True
+        #id = order.order_id
+           # return render(request, 'shop/checkout.html', {'thank':thank, 'id': id})
+        #request paytm to transfer the amount to your account after payment by user
+        
+        param_dict={
 
+                'MID': 'WorldP64425807474247',
+                'ORDER_ID': '2',
+                'TXN_AMOUNT': '1',
+                'CUST_ID': request.user.email,
+                'INDUSTRY_TYPE_ID': 'Retail',
+                'WEBSITE': 'WEBSTAGING',
+                'CHANNEL_ID': 'WEB',
+                'CALLBACK_URL':'http://127.0.0.1:8000/handlerequest/',
+
+        }
+        print("\n\n\n\n" + request.user.email + "\n\n\n")
+        param_dict['CHECKSUMHASH'] = Checksum.generate_checksum(param_dict, MERCHANT_KEY)
+        
+        return  render(request, 'pantry/paytm.html', {'param_dict': param_dict})
+    return render(request, 'pantry/checkout.html')
+
+@csrf_exempt
+def handlerequest(request):
+    form = request.POST
+    response_dict = {}
+    for i in form.keys():
+        response_dict[i] = form[i]
+        if i == 'CHECKSUMHASH':
+            checksum = form[i]
+
+    verify = Checksum.verify_checksum(response_dict, MERCHANT_KEY, checksum)
+    if verify:
+        if response_dict['RESPCODE'] == '01':
+            print('order successful')
+        else:
+            print('order was not successful because' + response_dict['RESPMSG'])
+    return render(request, 'pantry/paymentstatus.html', {'response': response_dict})
 
 """
 def grocery(request):
