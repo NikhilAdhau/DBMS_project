@@ -195,9 +195,14 @@ def update_cart(request, idz, typer):
     #print(type(cart), created)
     cart_item, created = Cart_item.objects.get_or_create(cart_id = cart, p_id = product)
     if mode == 'add':
+        messages.success(request, 'Added to cart')
         pass
     elif mode == 'delete':
+        messages.success(request, 'Item deleted')
         print("\n\n\n\n\\n\n\n\n\nn\n\n\n\n")
+        cart_item.delete()
+    elif mode == 'save':
+        update_wishlist(request, idz, 'add')
         cart_item.delete()
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     #
@@ -253,8 +258,13 @@ def update_wishlist(request, idz, typer):
     print(type(wishlist), created)
     wishlist_item, created = Wishlist_item.objects.get_or_create(wishlist_id = wishlist, p_id = product)
     if mode == 'add':
+        messages.success(request, "Added to wishlist")
         pass
     elif mode == 'delete':
+        wishlist_item.delete()
+        messages.success(request, "Item deleted")
+    elif mode == 'move':
+        update_cart(request, idz, 'add')
         wishlist_item.delete()
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     # print("\n\n\\n\n\n\n" + mode + "\n\nn\n\n\n\n\n")
