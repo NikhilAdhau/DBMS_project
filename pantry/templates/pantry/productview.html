@@ -24,14 +24,12 @@
             <h5 class="card-title">{{i.product_name}}</h5>
             <p class="card-text">Price - ₹ {{i.price}}/kg</p>
       {%if prod_id %}
-          <h1>Manihs</h1>
           {% for k in prod_id %}
             {% if k.p_id == i.p_id %}
               <a href="{% url 'cart' idz=i.p_id typer='add' %}" class="btn btn-primary">Added to Cart</a>
             {% endif %}
           {% endfor %}
       {% else %}
-      <h2>fjkdjf</h2>
         <a href="{% url 'update_cart' idz=i.p_id typer='add' %}" class="btn btn-primary">Add to Cart</a>
         <a href="{% url 'update_wishlist' idz=i.p_id typer='add'%}" class="btn btn-primary">Add to Wishlist</a>
 			{% endif %}

@@ -16,13 +16,17 @@
     <div class = "container mt-4">
       <div class="row">
         
-          {% for cart in cart1 %}
+        {% for prod, cart in cart1 %}
           
           <div class="col-sm-4">
-          <div class="card-group" >
+          <div class="card-group">
          
-            <img class="card-img-top" src="#" alt="Card image cap">
-    <a href="{% url 'update_wishlist' idz=cart.p_id.p_id typer='delete' %}" class="btn btn-primary">Remove from wishlist</a>
+            <img class="card-img-top" src="/media/{{prod.image}}" alt="Card image cap">
+            <div class="card-body">
+              <h5 class="card-title">{{prod.p_name}}</h5>
+                <p class="card-text">Price - ₹ {{prod.price}}/kg</p>
+                <a href="{% url 'update_wishlist' idz=cart.p_id.p_id typer='delete' %}" class="btn btn-primary">Remove from wishlist</a>
+            </div>
 
         </div>
       </div>

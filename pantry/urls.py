@@ -12,7 +12,9 @@ urlpatterns = [
     path('cart/<int:idz>/<str:typer>/', views.cart, name='cart'),
     path('update_cart/<int:idz>/<str:typer>/', views.update_cart, name='update_cart'),
     path('wishlist/<int:idz>/<str:typer>/', views.wishlist, name='wishlist'),
-    path('update_wishlist/<int:idz>/<str:typer>/', views.update_wishlist, name='update_wishlist')
+    path('update_wishlist/<int:idz>/<str:typer>/', views.update_wishlist, name='update_wishlist'),
+	path('checkout/', views.checkout, name='Checkout'),
+	path('handlerequest/', views.handlerequest, name='Handlerequest')
 ]
 
 """ path('grocery/', views.grocery, name = 'Grocery'),

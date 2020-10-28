@@ -23,9 +23,10 @@
 
             <img class="card-img-top" src="/media/{{prod.image}}" alt="Card image cap">
         <div class="card-body">
-          <h5 class="card-title">{{cart.product_name}}</h5>
-            <p class="card-text">Price - ₹ {{cart.price}}/kg</p>
-            <p class="card-text">Quantity - {{cart.quantity}} kg</p>
+          <h5 class="card-title">{{prod.p_name}}</h5>
+            <p class="card-text">Price - ₹ {{prod.price}}/kg</p>
+            <p class="card-text">Quantity - {{cart.prod_quantity}} kg</p>
+
     <a href="{% url 'update_cart' idz=cart.p_id.p_id typer='delete' %}" class="btn btn-primary">Remove from Cart</a>
 
         </div>
@@ -46,7 +47,7 @@
     </div>
         <div class="text-sm-center mt-5">
           
-          <a href="#" class="btn btn-success my-5" style = "width : 250px;">Place Order</a>
+          <a href="{% url 'Checkout' %}" class="btn btn-success my-5" style = "width : 250px;">Proceed to Checkout</a>
     {% else %}
         <h4 class="text-sm-center mt-5">Cart is empty</h4>
     {% endif %}
