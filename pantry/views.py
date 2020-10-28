@@ -18,25 +18,68 @@ from PayTm import Checksum
 MERCHANT_KEY = 'Yjvvna94261309762207'
 
 def index(request):
+    allProds = []
+    catx = Product.objects.values('category')
+    cats = {item['category'] for item in catx}
+    for cat in cats:
+        product = Product.objects.filter(category=cat)
+        allProds.append([cat, product])
+
+    if request.user.is_authenticated:
+        carx = len(Cart_item.objects.filter(cart_id = Cart.objects.get(user = request.user)))
+    else: 
+        carx = None
+    params = {'list' : allProds, 'cart':carx }
+    print("I ma in ")
+    return render(request, 'pantry/index.html', params)
+
+def grocery(request):
+    if request.user.is_authenticated:
+        carx = len(Cart_item.objects.filter(cart_id = Cart.objects.get(user = request.user)))
+    else: 
+        carx = None
+    allProds = []
+    catx = Product.objects.values('category')
+    cats = {item['category'] for item in catx}
+    for cat in cats:
+        product = Product.objects.filter(category=cat)
+        allProds.append([cat, product])
+
+    # allProds = [params, params, params]
+    params = {'list': allProds, 'cart': carx}
+    return render(request, 'pantry/grocery.html', params)
+
+
+def fruits(request):
+	if(request.user.is_authenticated):
+		carx = len(Cart.objects.filter(user=request.user))
+	else : 
+		carx = None
 	allProds = []
 	catx = Product.objects.values('category')
 	cats = {item['category'] for item in catx}
 	for cat in cats:
-		product = Product.objects.filter(category=cat)
-		allProds.append([cat, product])
+		if cat == 'Fruit':
+			product = Product.objects.filter(category=cat)
+			allProds.append([cat, product])
+			params = {'list' : allProds , 'cart': carx}
+	return render(request, 'pantry/fruits.html', params)
 
-	# allProds = [params, params, params]
-	"""if (request.user.is_authenticated):
-		user = request.user
-		userid = user.id
-		a = Cart.objects.filter(user = request.user)
-		cartid = a[0].cart_id
-		carx = len(Cart_item.objects.filter(cart_id=cartid))
-	else:"""
-	carx = None
-	params = {'list' : allProds, 'cart':carx }
-	print("I ma in ")
-	return render(request, 'pantry/index.html', params)
+
+def vegetables(request):
+	if(request.user.is_authenticated):
+		carx = len(Cart.objects.filter(user=request.user))
+	else : 
+		carx = None
+	allProds = []
+	catx = Product.objects.values('category')
+	cats = {item['category'] for item in catx}
+	for cat in cats:
+		if cat == 'vegetables':
+			product = Product.objects.filter(category=cat)
+			allProds.append([cat, product])
+			params = {'list' : allProds, 'cart': carx}
+	return render(request, 'pantry/vegetables.html', params)
 
 def register(request):
     carx = None
@@ -103,71 +146,18 @@ def productview(request, cat):
 		carx = len(Cart.objects.filter(user=request.user))
 	else : 
 	"""
-	carx = None
 	product = Product.objects.all()
 	a = []
 	for i in product:
 		if cat == i.category:
 			a.append(i)
-	
+	if(request.user.is_authenticated):
+		carx = len(Cart_item.objects.filter(cart_id = Cart.objects.get(user = request.user)))
+	else : 
+		carx = None
 	return render(request, 'pantry/productview.html', {'list': a, 'cart': carx})
 
 
-#def cart(request, idz, typer):
-#    
-#    mode = str(typer)
-#    id1 = int(idz)
-#    print("\n\n\\n\n\n\n" + mode + "\n\nn\n\n\n\n\n")
-#    print(mode)
-#    if mode == 'add':
-#        cart4 = Cart.objects.filter(user=request.user)
-#        print(cart4)
-#        if len(cart4) == 0:
-#            cart1 = Cart()
-#            cart1.user = request.user
-#            total_cost = 0
-#            cart1.save()
-#            cart4 = Cart.objects.filter(user = request.user)
-#        #wish4 = Wishlist.objects.filter(product_id=id1, user=request.user)
-#        cartprod = Cart_item.objects.filter(p_id = idz, cart_id = cart4[0].cart_id)
-#        print("\n\n\n\Manish\n\n\n\n\n\n\\n\n")
-#        print(cart4)
-#        if len(cartprod) == 0:
-#            cart1 = Cart_item()
-#            cart1.cart_id = Cart.objects.get(user = request.user)
-#            cart1.p_id = Product.objects.get(p_id = idz)
-#            cart1.prod_quantity = 1
-#            cart1.save()
-#        else:
-#            cart1 = Cart_item.objects.filter(p_id = idz)
-#            print(cart1)
-#            print("\n\n\n\\n\n\n\n\n\n\\n\n")
-#            #cart1.update(cart1.prod_quantity = cart1.prod_quantity + 1)
-#        #print("I am in add")
-#        #if wish4:
-#        #	wish4.delete()
-#        print("\n\n\n\\n\n\n\n\n\n\\n\n")
-#    elif mode == 'delete':
-#        cart2 = Cart.objects.get(user =request.user)
-#        if cart2:
-#            #cart3 = Cart_item.objects.filter(p_id=id1,cart_id = cart[0].cart_id)
-#            cart3 = Cart_item.objects.get(p_id = id1)
-#        if cart3:
-#            cart3.delete()
-#    elif mode == 'none2':
-#        print("\n\n\\n\n\n\I am in none2\n\nn\n\n\n\n\n")
-#        cart2 = Cart.objects.get(user=request.user)
-#        if cart2:
-#            cart3 = Cart_item.objects.filter(cart_id = cart2.cart_id)
-#        sum1 = 0
-#        for car in cart3:
-#            #print(Product.objects.get(p_id = car.p_id.p_id).price
-#            price = Product.objects.get(p_id = car.p_id.p_id).price
-#            sum1 = sum1 + price * car.prod_quantity
-#        cart2.total_cost = sum1
-#        return render(request, 'pantry/cart.html', {'cart1': cart3, 'sum': sum1, 'cart':len(cart3)})
-#    #return render(request, 'pantry/productview.html', {'prod_id': Cart_item.objects.filter(cart_id = Cart.objects.get(user = request.user))})
-#    return HttpResponseRedirect(request.META.get('HTTP_REFERER'), {'prod_id': Cart_item.objects.filter(cart_id = Cart.objects.get(user = request.user))})
 @login_required
 def cart(request,idz, typer):
     cart = Cart.objects.filter(user = request.user)[0]
@@ -183,6 +173,7 @@ def cart(request,idz, typer):
     cart_qs = zip(product, cart_qs)
     return render(request, 'pantry/cart.html', {'cart1': cart_qs, 'sum' : sum1, 'cart':len(Cart_item.objects.filter(cart_id = cart.cart_id))})
 
+@login_required
 def update_cart(request, idz, typer):
     mode = str(typer)
     id1 = int(idz)
@@ -225,38 +216,9 @@ def wishlist(request, idz, typer):
         wishlist_qs = zip(product, wishlist_qs)
         return render(request, 'pantry/wishlist.html', {'cart1': wishlist_qs})
     return render(request, 'pantry/wishlist.html')
+
 @login_required
 def update_wishlist(request, idz, typer):
-    # mode = str(typer)
-    # id1 = int(idz)
-    # if mode == 'add':
-    #     wishlist4 = Wishlist.objects.filter(product_id=id1, user=request.user)
-    #     if not wishlist4:
-    #         prod = Product.objects.get(pk=id1)
-    #         cart1 = Wishlist()
-    #         cart1.product_name = prod.product_name
-    #         cart1.product_id = id1
-    #         cart1.user = request.user
-    #         cart1.image = prod.image
-    #         cart1.price = prod.price
-    #         cart1.quantity = 1
-    #         cart1.category = prod.category
-    #         cart1.subcategory = prod.subcategory
-    #         cart1.save()
-    #     else:
-    #         cart1 = wishlist4.first()
-    #         quan = cart1.quantity
-    #         quan = quan + 1
-    #         wishlist4.update(quantity=quan)
-    # elif mode == 'delete':
-    #     cart3 = Wishlist.objects.filter(product_id=id1).first()
-    #     if cart3:
-    #         cart3.delete()
-    # elif mode == 'none2':
-    #     print('none')
-    #     cart2 = Wishlist.objects.filter(user=request.user)
-    #     return render(request, 'pantry/wishlist.html', {'cart1': cart2, 'cart':len(Cart.objects.filter(user=request.user))})
-    # return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     mode = str(typer)
     id1 = int(idz)
     #product = get_object_or_404(Product ,p_id = id1)
@@ -274,61 +236,23 @@ def update_wishlist(request, idz, typer):
         update_cart(request, idz, 'add')
         wishlist_item.delete()
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
-    # print("\n\n\\n\n\n\n" + mode + "\n\nn\n\n\n\n\n")
-    # print(mode)
-    # if mode == 'add':
-    #     cart4 = Wishlist.objects.filter(user=request.user)
-    #     print(cart4)
-    #     if len(cart4) == 0:
-    #         cart1 = Cart()
-    #         cart1.user = request.user
-    #         total_cost = 0
-    #         cart1.save()
-    #         cart4 = Wishlist.objects.filter(user = request.user)
-    #     #wish4 = Wishlist.objects.filter(product_id=id1, user=request.user)
-    #     #cartprod = Wishlist_item.objects.filter(p_id = idz, wishlist_id = cart4[0].wishlist_id)
-    #     print("\n\n\n\Manish\n\n\n\n\n\n\\n\n")
-    #     print(cart4)
-    #     # if len(cartprod) == 0:
-    #     #     cart1 = Cart_item()
-    #     #     cart1.wishlist_id = Wishlist.objects.get(user = request.user)
-    #     #     cart1.p_id = Product.objects.get(p_id = idz)
-    #     #     #cart1.prod_quantity = 1
-    #     #     cart1.save()
-    #     # else:
-    #     cart1 = Wishlist_item.objects.filter(p_id = idz)
-    #     print(cart1)
-    #     print("\n\n\n\\n\n\n\n\n\n\\n\n")
-    #         #cart1.update(cart1.prod_quantity = cart1.prod_quantity + 1)
-    #     #print("I am in add")
-    #     #if wish4:
-    #     #   wish4.delete()
-    #     print("\n\n\n\\n\n\n\n\n\n\\n\n")
-    # elif mode == 'delete':
-    #     cart2 = Wishlist.objects.get(user =request.user)
-    #     if cart2:
-    #         #cart3 = Cart_item.objects.filter(p_id=id1,cart_id = cart[0].cart_id)
-    #         cart3 = Wishlist_item.objects.get(p_id = id1)
-    #     if cart3:
-    #         cart3.delete()
-    # elif mode == 'none2':
-    #     print("\n\n\\n\n\n\I am in none2\n\nn\n\n\n\n\n")
-    #     cart2 = Wishlist.objects.filter(user=request.user)
-    #     if cart2:
-    #         cart3 = Wishlist_item.objects.filter(wishlist_id = cart2.wishlist_id)
-    #     else:
-    #         cart3 = ''
-    #     # sum1 = 0
-    #     # for car in cart3:
-    #     #     #print(Product.objects.get(p_id = car.p_id.p_id).price
-    #     #     price = Product.objects.get(p_id = car.p_id.p_id).price
-    #     #     sum1 = sum1 + price * car.prod_quantity
-    #     # cart2.total_cost = sum1
-    #     # return render(request, 'pantry/wishlist.html', {'cart1': cart3, 'sum': sum1, 'cart':len(cart3)})
-    #     return render(request, 'pantry/wishlist.html', {'cart1': cart3})
-    # #return render(request, 'pantry/productview.html', {'prod_id': Cart_item.objects.filter(cart_id = Cart.objects.get(user = request.user))})
-    # return HttpResponseRedirect(request.META.get('HTTP_REFERER'), {'prod_id': Wishlist_item.objects.filter(cart_id = Wishlist.objects.get(user = request.user))})
 
+def search_results(request):
+	if(request.user.is_authenticated):
+		carx = len(Cart_item.objects.filter(cart_id = Cart.objects.get(user = request.user)))
+	else : 
+		carx = None
+	search = request.GET.get('Search', 'default')
+	products = Product.objects.all()
+	a = []
+
+	for i in products:
+		if re.search(search, i.p_name, re.IGNORECASE):
+			a.append(i)
+	params = {'list': a, 'cart': carx}
+	return render(request, 'pantry/search.html', params)
+
+@login_required
 def checkout(request):
     if request.method=="POST":
         items_json = request.POST.get('itemsJson', '')
@@ -385,53 +309,7 @@ def handlerequest(request):
     return render(request, 'pantry/paymentstatus.html', {'response': response_dict})
 
 """
-def grocery(request):
-	if(request.user.is_authenticated):
-		carx = len(Cart.objects.filter(user=request.user))
-	else : 
-		carx = None
-	allProds = []
-	catx = Product.objects.values('category')
-	cats = {item['category'] for item in catx}
-	for cat in cats:
-		product = Product.objects.filter(category=cat)
-		allProds.append([cat, product])
 
-	# allProds = [params, params, params]
-	params = {'list': allProds, 'slides': SlideShow.objects.all(), 'cart': carx}
-	return render(request, 'shop/grocery.html', params)
-
-
-def fruits(request):
-	if(request.user.is_authenticated):
-		carx = len(Cart.objects.filter(user=request.user))
-	else : 
-		carx = None
-	allProds = []
-	catx = Product.objects.values('category')
-	cats = {item['category'] for item in catx}
-	for cat in cats:
-		if cat == 'Fruit':
-			product = Product.objects.filter(category=cat)
-			allProds.append([cat, product])
-			params = {'list' : allProds, 'slides': SlideShow.objects.all(), 'cart': carx}
-	return render(request, 'shop/fruits.html', params)
-
-
-def vegetables(request):
-	if(request.user.is_authenticated):
-		carx = len(Cart.objects.filter(user=request.user))
-	else : 
-		carx = None
-	allProds = []
-	catx = Product.objects.values('category')
-	cats = {item['category'] for item in catx}
-	for cat in cats:
-		if cat == 'vegetables':
-			product = Product.objects.filter(category=cat)
-			allProds.append([cat, product])
-			params = {'list' : allProds, 'slides': SlideShow.objects.all(), 'cart': carx}
-	return render(request, 'shop/vegetables.html', params)
 
 
 def search_results(request):
