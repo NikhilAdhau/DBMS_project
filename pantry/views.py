@@ -195,8 +195,15 @@ def update_cart(request, idz, typer):
     #print(type(cart), created)
     cart_item, created = Cart_item.objects.get_or_create(cart_id = cart, p_id = product)
     if mode == 'add':
+        cart_item.prod_quantity = cart_item.prod_quantity +  1 
+        cart_item.save()
+        print (cart_item.prod_quantity )
         messages.success(request, 'Added to cart')
-        pass
+    elif mode == 'sub':
+        cart_item.prod_quantity = cart_item.prod_quantity - 1 
+        cart_item.save()
+        if cart_item.prod_quantity == 0:
+            cart_item.delete()
     elif mode == 'delete':
         messages.success(request, 'Item deleted')
         print("\n\n\n\n\\n\n\n\n\nn\n\n\n\n")

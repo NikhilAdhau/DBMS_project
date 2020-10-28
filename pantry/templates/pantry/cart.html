@@ -32,8 +32,11 @@
         <div class="card-body">
           <h5 class="card-title">{{prod.p_name}}</h5>
             <p class="card-text">Price - ₹ {{prod.price}}/kg</p>
-            <p class="card-text">Quantity - {{cart.prod_quantity}} kg</p>
 
+    <a href="{% url 'update_cart' idz=cart.p_id.p_id typer='add' %}" class="btn btn-primary">+</a>
+    {{cart.prod_quantity}}kg
+    <a href="{% url 'update_cart' idz=cart.p_id.p_id typer='sub' %}" class="btn btn-primary">-</a>
+    <br><br>
     <a href="{% url 'update_cart' idz=cart.p_id.p_id typer='delete' %}" class="btn btn-primary">Remove from Cart</a>
     <a href="{% url 'update_cart' idz=cart.p_id.p_id typer='save' %}" class="btn btn-primary">Save for later</a>
 

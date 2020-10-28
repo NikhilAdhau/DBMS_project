@@ -7,7 +7,6 @@ class Product(models.Model):
     category = models.CharField(max_length=300, default='')
     price = models.IntegerField(default=0)
     image = models.ImageField(upload_to='pantry/images', default='')
-    p_quantity = models.IntegerField(default = 0)
     availability = models.BooleanField(default=True)
     def __str__(self):
         return self.p_name
@@ -24,7 +23,7 @@ class Cart(models.Model):
 class Cart_item(models.Model):
     cart_id = models.ForeignKey('Cart', on_delete = models.CASCADE, default=None)
     p_id = models.ForeignKey('Product', on_delete = models.CASCADE, default=None)
-    prod_quantity = models.IntegerField(default = 1)
+    prod_quantity = models.IntegerField(default = 0)
 
 
 class Order(models.Model):
@@ -35,6 +34,7 @@ class Order_item(models.Model):
     order_id = models.ForeignKey('Order', on_delete = models.CASCADE, default=None)
     p_id = models.ForeignKey('Product', on_delete = models.CASCADE, default=None)
     date = models.DateTimeField()
+    quantity = models.IntegerField(default = 1)
     shipped = models.BooleanField()
     deliverred = models.BooleanField()
     cancelled = models.BooleanField()
