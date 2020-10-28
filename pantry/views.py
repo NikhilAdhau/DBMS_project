@@ -194,7 +194,6 @@ def update_cart(request, idz, typer):
     if mode == 'add':
         pass
     elif mode == 'delete':
-        cart_item.delete()
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     #
 #
