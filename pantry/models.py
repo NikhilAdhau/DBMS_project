@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
+import datetime
+import django
 
 class Product(models.Model):
     p_id = models.AutoField(primary_key = True)
@@ -25,21 +27,22 @@ class Cart_item(models.Model):
     p_id = models.ForeignKey('Product', on_delete = models.CASCADE, default=None)
     prod_quantity = models.IntegerField(default = 0)
 
-
 class Order(models.Model):
     order_id = models.AutoField(primary_key = True)
     user = models.ForeignKey(User, on_delete = models.CASCADE, default=None)
-
+    order_success = models.BooleanField(default=False)
+    date = models.DateTimeField(default=django.utils.timezone.now)
+    order_amount = models.IntegerField(default = 0)
+    
 class Order_item(models.Model):
     order_id = models.ForeignKey('Order', on_delete = models.CASCADE, default=None)
     p_id = models.ForeignKey('Product', on_delete = models.CASCADE, default=None)
-    date = models.DateTimeField()
-    quantity = models.IntegerField(default = 1)
-    shipped = models.BooleanField()
-    deliverred = models.BooleanField()
-    cancelled = models.BooleanField()
+    shipped = models.BooleanField(default=False)
+    deliverred = models.BooleanField(default=False)
+    cancelled = models.BooleanField(default=False)
 
 class Order_quantity(models.Model):
+    order_id = models.ForeignKey('Order', on_delete = models.CASCADE, default=None)
     p_id = models.ForeignKey('Product', on_delete = models.CASCADE, default=None)
     quantity = models.IntegerField()
 

@@ -15,7 +15,7 @@ from django.http import HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
 from PayTm import Checksum
 
-MERCHANT_KEY = 'Yjvvna94261309762207'
+MERCHANT_KEY = 'Your Merchant Key'
 
 def index(request):
     allProds = []
@@ -26,7 +26,10 @@ def index(request):
         allProds.append([cat, product])
 
     if request.user.is_authenticated:
-        carx = len(Cart_item.objects.filter(cart_id = Cart.objects.get(user = request.user)))
+        if len(Cart.objects.filter(user = request.user)):
+            carx = len(Cart_item.objects.filter(cart_id = Cart.objects.get(user = request.user)))
+        else:
+            carx = None
     else: 
         carx = None
     params = {'list' : allProds, 'cart':carx }
@@ -35,9 +38,13 @@ def index(request):
 
 def grocery(request):
     if request.user.is_authenticated:
-        carx = len(Cart_item.objects.filter(cart_id = Cart.objects.get(user = request.user)))
+        if len(Cart.objects.filter(user = request.user)):
+            carx = len(Cart_item.objects.filter(cart_id = Cart.objects.get(user = request.user)))
+        else:
+            carx = None
     else: 
         carx = None
+
     allProds = []
     catx = Product.objects.values('category')
     cats = {item['category'] for item in catx}
@@ -51,35 +58,42 @@ def grocery(request):
 
 
 def fruits(request):
-	if(request.user.is_authenticated):
-		carx = len(Cart.objects.filter(user=request.user))
-	else : 
-		carx = None
-	allProds = []
-	catx = Product.objects.values('category')
-	cats = {item['category'] for item in catx}
-	for cat in cats:
-		if cat == 'Fruit':
-			product = Product.objects.filter(category=cat)
-			allProds.append([cat, product])
-			params = {'list' : allProds , 'cart': carx}
-	return render(request, 'pantry/fruits.html', params)
+    if request.user.is_authenticated:
+        if len(Cart.objects.filter(user = request.user)):
+            carx = len(Cart_item.objects.filter(cart_id = Cart.objects.get(user = request.user)))
+        else:
+            carx = None
+    else: 
+        carx = None
+    allProds = []
+    catx = Product.objects.values('category')
+    cats = {item['category'] for item in catx}
+    for cat in cats:
+        if cat == 'Fruit':
+            product = Product.objects.filter(category=cat)
+            allProds.append([cat, product])
+            params = {'list' : allProds , 'cart': carx}
+    return render(request, 'pantry/fruits.html', params)
 
 
 def vegetables(request):
-	if(request.user.is_authenticated):
-		carx = len(Cart.objects.filter(user=request.user))
-	else : 
-		carx = None
-	allProds = []
-	catx = Product.objects.values('category')
-	cats = {item['category'] for item in catx}
-	for cat in cats:
-		if cat == 'vegetables':
-			product = Product.objects.filter(category=cat)
-			allProds.append([cat, product])
-			params = {'list' : allProds, 'cart': carx}
-	return render(request, 'pantry/vegetables.html', params)
+    if request.user.is_authenticated:
+        if len(Cart.objects.filter(user = request.user)):
+            carx = len(Cart_item.objects.filter(cart_id = Cart.objects.get(user = request.user)))
+        else:
+            carx = None
+    else: 
+        carx = None
+
+    allProds = []
+    catx = Product.objects.values('category')
+    cats = {item['category'] for item in catx}
+    for cat in cats:
+        if cat == 'vegetables':
+            product = Product.objects.filter(category=cat)
+            allProds.append([cat, product])
+            params = {'list' : allProds, 'cart': carx}
+    return render(request, 'pantry/vegetables.html', params)
 
 def register(request):
     carx = None
@@ -142,27 +156,26 @@ def Signup(request):
         return redirect('home')
 
 def productview(request, cat):
-	"""if(request.user.is_authenticated):
-		carx = len(Cart.objects.filter(user=request.user))
-	else : 
-	"""
-	product = Product.objects.all()
-	a = []
-	for i in product:
-		if cat == i.category:
-			a.append(i)
-	if(request.user.is_authenticated):
-		carx = len(Cart_item.objects.filter(cart_id = Cart.objects.get(user = request.user)))
-	else : 
-		carx = None
-	return render(request, 'pantry/productview.html', {'list': a, 'cart': carx})
+    product = Product.objects.all()
+    a = []
+    for i in product:
+        if cat == i.category:
+            a.append(i)
+    if request.user.is_authenticated:
+        if len(Cart.objects.filter(user = request.user)):
+            carx = len(Cart_item.objects.filter(cart_id = Cart.objects.get(user = request.user)))
+        else:
+            carx = None
+    else: 
+        carx = None
+    return render(request, 'pantry/productview.html', {'list': a, 'cart': carx})
 
 
 @login_required
 def cart(request,idz, typer):
-    cart = Cart.objects.filter(user = request.user)[0]
-    if cart:
-        cart_qs = Cart_item.objects.filter(cart_id = cart.cart_id)
+    cart, created = Cart.objects.get_or_create(user = request.user)
+    cart_qs = Cart_item.objects.filter(cart_id = cart)
+
     sum1 = 0
     product = []
     for car in cart_qs:
@@ -177,12 +190,10 @@ def cart(request,idz, typer):
 def update_cart(request, idz, typer):
     mode = str(typer)
     id1 = int(idz)
-    #product = get_object_or_404(Product ,p_id = id1)
     product = Product.objects.filter(p_id = id1).first()
     #cart, created = Cart.objects.get_or_create(user = request.user)
-    cart = Cart.objects.filter(user = request.user)[0]
-    if not cart:
-        cart = Cart.objects.create(user = request.user)
+    cart, created = Cart.objects.get_or_create(user = request.user)
+
     #print(type(cart), created)
     cart_item, created = Cart_item.objects.get_or_create(cart_id = cart, p_id = product)
     if mode == 'add':
@@ -264,6 +275,13 @@ def checkout(request):
         state = request.POST.get('state', '')
         zip_code = request.POST.get('zip_code', '')
         phone = request.POST.get('phone', '')
+
+        order = Order.objects.create(user = request.user, order_amount = Cart.objects.get(user=request.user).total_cost)
+        cartitem = Cart_item.objects.filter(cart_id = Cart.objects.get(user = request.user))
+        for i in cartitem:
+            Order_item = Order_item.objects.create(order_id = order, p_id = Product.objects.get(p_id = i.p_id))
+            Order_quant = Order_quantity.objects.create(order_id = order, p_id = Product.objects.get(p_id = i.p_id))
+        
         #order = Orders(items_json=items_json, name=name, email=email, address=address, city=city, state=state, zip_code=zip_code, phone=phone, amount=amount)
         #order.save()
         #update = OrderUpdate(order_id=order.order_id, update_desc="The order has been placed")
@@ -275,9 +293,9 @@ def checkout(request):
         
         param_dict={
 
-                'MID': 'WorldP64425807474247',
-                'ORDER_ID': '2',
-                'TXN_AMOUNT': '1',
+                'MID': 'Merchant_id',
+                'ORDER_ID': str(order.order_id),
+                'TXN_AMOUNT': str(order.order_amount),
                 'CUST_ID': request.user.email,
                 'INDUSTRY_TYPE_ID': 'Retail',
                 'WEBSITE': 'WEBSTAGING',
@@ -285,7 +303,6 @@ def checkout(request):
                 'CALLBACK_URL':'http://127.0.0.1:8000/handlerequest/',
 
         }
-        print("\n\n\n\n" + request.user.email + "\n\n\n")
         param_dict['CHECKSUMHASH'] = Checksum.generate_checksum(param_dict, MERCHANT_KEY)
         
         return  render(request, 'pantry/paytm.html', {'param_dict': param_dict})
@@ -304,6 +321,7 @@ def handlerequest(request):
     if verify:
         if response_dict['RESPCODE'] == '01':
             print('order successful')
+            Order.objects.get(user = request.user, order_id = response_dict['ORDERID']).order_success = True
         else:
             print('order was not successful because' + response_dict['RESPMSG'])
     return render(request, 'pantry/paymentstatus.html', {'response': response_dict})
