@@ -160,7 +160,17 @@ def productview(request, cat):
     a = []
     for i in product:
         if cat == i.category:
-            a.append(i)
+            #a.append(i)
+            if Cart_item.objects.filter(p_id = i):
+                if Wishlist_item.objects.filter(p_id = i):
+                    a.append([i,True,True])
+                else:
+                    a.append([i, True, False])
+            else:
+                if Wishlist_item.objects.filter(p_id = i):
+                    a.append([i,False,True])
+                else:
+                    a.append([i,False, True])
     if request.user.is_authenticated:
         if len(Cart.objects.filter(user = request.user)):
             carx = len(Cart_item.objects.filter(cart_id = Cart.objects.get(user = request.user)))
@@ -208,7 +218,6 @@ def update_cart(request, idz, typer):
             cart_item.delete()
     elif mode == 'delete':
         messages.success(request, 'Item deleted')
-        print("\n\n\n\n\\n\n\n\n\nn\n\n\n\n")
         cart_item.delete()
     elif mode == 'save':
         update_wishlist(request, idz, 'add')
