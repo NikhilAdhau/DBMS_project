@@ -170,7 +170,7 @@ def productview(request, cat):
                 if Wishlist_item.objects.filter(p_id = i):
                     a.append([i,False,True])
                 else:
-                    a.append([i,False, True])
+                    a.append([i,False, False])
     if request.user.is_authenticated:
         if len(Cart.objects.filter(user = request.user)):
             carx = len(Cart_item.objects.filter(cart_id = Cart.objects.get(user = request.user)))
@@ -212,7 +212,7 @@ def update_cart(request, idz, typer):
         cart_item.prod_quantity = cart_item.prod_quantity +  1 
         cart_item.save()
         print (cart_item.prod_quantity )
-        messages.success(request, 'Added to cart')
+        messages.sukkess(request, 'Added to cart')
     elif mode == 'sub':
         cart_item.prod_quantity = cart_item.prod_quantity - 1 
         cart_item.save()

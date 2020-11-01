@@ -171,10 +171,6 @@
 	
 	<div class="overlay-content">
 		<span class="" style="font-size:1.5rem;cursor:pointer;color:#f1f1f1;position:absolute;left:9%;top:5%;" onclick="closeNav()">&#9776;</span>
-		{% if user.is_authenticated %}	
-		<a  href="#"><img class="rounded-circle article-img" src="#" id="img" style="width:40px;"><b><small>&nbsp; {{request.user}}</small></b></a>
-		{% endif %}
-	  <a href="$">About</a>
 	  <!-- <a href="#">Wishlist</a> -->
 	  {% if user.is_authenticated %}
 	  <a href="{% url 'profile' %}">My Account</a>
