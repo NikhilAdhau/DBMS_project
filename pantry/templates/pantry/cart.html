@@ -12,6 +12,7 @@
 <h1 class="text-center mt-5">Cart</h1>
 <!--    <div class = "container">-->
 <!--      <div class="card-deck" style = "width: 70rem;">-->
+{% comment %}
 {% if messages %}
 <ul class="messages">
     {% for message in messages %}
@@ -19,6 +20,7 @@
     {% endfor %}
 </ul>
 {% endif %}
+{% endcomment %}
     {% if cart1 %}
     <div class = "container mt-4">
       <div class="row">
