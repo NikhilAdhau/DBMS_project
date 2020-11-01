@@ -23,8 +23,9 @@
          <div class="card-body">
              <h5 class="card-title">{{i.p_name}}</h5>
              <p class="card-text">Price - ₹ {{i.price}}/kg</p>
+             <a href="{% url 'update_cart' idz=i.p_id typer='add' %}" class="btn btn-primary">Add to Cart</a>
              <a href="{% url 'update_wishlist' idz=i.p_id typer='add' %}" class="btn btn-primary">Add to Wishlist</a>
-             <a href="{% url 'update_wishlist' idz=i.p_id typer='add' %}" class="btn btn-primary">Add to Cart</a>
+             
          </div>
        </div>
      </div>
