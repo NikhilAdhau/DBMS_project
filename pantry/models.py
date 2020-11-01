@@ -3,6 +3,12 @@ from django.contrib.auth.models import User
 import datetime
 import django
 
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete = models.CASCADE)
+    
+    def __str__(self):
+        return self.user.username
+
 class Product(models.Model):
     p_id = models.AutoField(primary_key = True)
     p_name = models.CharField(max_length=30)

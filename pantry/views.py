@@ -259,6 +259,10 @@ def update_wishlist(request, idz, typer):
         wishlist_item.delete()
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
+@login_required
+def profile(request):
+    return render(request, 'pantry/profile.html')
+
 def search_results(request):
     if request.user.is_authenticated:
         if len(Cart.objects.filter(user = request.user)):
@@ -414,8 +418,8 @@ def register(request):
     else:
         forms = UserRegisterForm()
     return render(request, 'users/register.html', {'form': forms, 'cart': carx})
-
-
+"""
+"""
 @login_required
 def profile(request):
     if request.method == 'POST':
@@ -435,9 +439,9 @@ def profile(request):
         'p_form': p_form, 
         'cart': len(Cart.objects.filter(user=request.user))
     }
-    return render(request, 'users/profile.html', context)
-
-
+    return render(request, 'profile.html', context)
+"""
+"""
 @login_required
 def cart(request, idz, typer, quant):
     mode = str(typer)

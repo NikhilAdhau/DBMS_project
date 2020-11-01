@@ -8,6 +8,7 @@ from .models import Order_item
 from .models import Order_quantity
 from .models import Wishlist
 from .models import Wishlist_item
+from .models import Profile
 
 
 admin.site.register(Product)
@@ -19,3 +20,4 @@ admin.site.register(Order_item)
 admin.site.register(Order_quantity)
 admin.site.register(Wishlist)
 admin.site.register(Wishlist_item)
+admin.site.register(Profile)
