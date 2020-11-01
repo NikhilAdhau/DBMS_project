@@ -43,17 +43,13 @@ class Order(models.Model):
     order_city = models.CharField(max_length = 50, default = '')
     order_state = models.CharField(max_length = 50, default = '')
     order_phone = models.BigIntegerField(default = 0000000000)
-
-
-
-class Order_item(models.Model):
-    order_id = models.ForeignKey('Order', on_delete = models.CASCADE, default=None)
-    p_id = models.ForeignKey('Product', on_delete = models.CASCADE, default=None)
     shipped = models.BooleanField(default=False)
     deliverred = models.BooleanField(default=False)
     cancelled = models.BooleanField(default=False)
 
-class Order_quantity(models.Model):
+
+
+class Order_item(models.Model):
     order_id = models.ForeignKey('Order', on_delete = models.CASCADE, default=None)
     p_id = models.ForeignKey('Product', on_delete = models.CASCADE, default=None)
     quantity = models.IntegerField(default=1)

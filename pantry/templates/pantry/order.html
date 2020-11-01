@@ -231,28 +231,12 @@ table.table .avatar {
         <div class="table-wrapper">
             <div class="table-title">
                 <div class="row">
-                    <div class="col-sm-4">
+                    <div class="col-sm-4 mt-5">
                         <h2>Order <b>Details</b></h2>
                     </div>
                 </div>
             </div>
-            <div class="table-filter">
-                <div class="row">
-                    <div class="col-sm-3">
-                        <div class="show-entries">
-                            <span>Show</span>
-                            <select class="form-control">
-                                <option>5</option>
-                                <option>10</option>
-                                <option>15</option>
-                                <option>20</option>
-                            </select>
-                            <span>entries</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <table class="table table-striped table-hover">
+            <table class="table table-striped table-hover mt-5">
                 <thead>
                     <tr>
                         <th>Order Id</th>
@@ -264,13 +248,22 @@ table.table .avatar {
                     </tr>
                 </thead>
                 <tbody>
+					{% for i in order %}
                     <tr>
-                        <td>1</td>
-                        <td>Jun 15, 2017</td>                        
-                        <td><span class="status text-success">&bull;</span> Delivered</td>
-                        <td>$254</td>
-                        <td><a href="#" class="view" title="View Details" data-toggle="tooltip"><i class="material-icons">&#xE5C8;</i></a></td>
-                    </tr>
+                        <th>{{i.0}}</th>
+                        <th>{{i.1}}</th>
+                        <th>{{i.2}}</th>						
+                        <th>{{i.3}}</th>						
+						<th>{{i.4}}</th>
+						{% if i.3 == "Cancelled" %}
+							<th>Order Cancelled</th>
+						{% elif i.3 == "Delivered" %}
+							<th>Order Delivered</th>
+						{% else %}
+							<th><a href="{% url 'cancelorder' idz=i.0 %}"><button class="btn btn-sm btn-primary">Cancel Order</button</th>
+						{% endif %}
+					</tr>
+					{% endfor %}
                 </tbody>
             </table>
 

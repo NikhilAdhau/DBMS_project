@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from math import ceil
-from .models import Product, Cart, Wishlist, Wishlist_item, Product_category, Order_quantity, Order_item, Order, Cart_item
+from .models import Product, Cart, Wishlist, Wishlist_item, Product_category, Order_item, Order, Cart_item
 import re
 from django.contrib.auth.models import User
 import smtplib 
@@ -293,8 +293,7 @@ def checkout(request):
         order = Order.objects.create(user = request.user, order_amount = Cart.objects.get(user=request.user).total_cost, order_address=address, order_city=city, order_state=state, order_phone=phone)
         cartitem = Cart_item.objects.filter(cart_id = Cart.objects.get(user = request.user))
         for i in cartitem:
-            Order_item.objects.create(order_id = order, p_id = Product.objects.get(p_id = i.p_id.p_id))
-            Order_quantity.objects.create(order_id = order, p_id = Product.objects.get(p_id = i.p_id.p_id), quantity=i.prod_quantity)
+            Order_item.objects.create(order_id = order, p_id = Product.objects.get(p_id = i.p_id.p_id), quantity=i.prod_quantity)
         
         #order = Orders(items_json=items_json, name=name, email=email, address=address, city=city, state=state, zip_code=zip_code, phone=phone, amount=amount)
         #order.save()
@@ -336,20 +335,84 @@ def handlerequest(request):
     verify = Checksum.verify_checksum(response_dict, MERCHANT_KEY, checksum)
     if verify:
         if response_dict['RESPCODE'] == '01':
-            print('order successful')
             a = Order.objects.get(order_id = int(response_dict['ORDERID']))
             a.order_success = True
             a.save()
             Cart.objects.get(total_cost = a.order_amount).delete()
+            s = smtplib.SMTP('smtp.gmail.com', 587)
+            s.starttls() 
+            s.login("wethestockedpantry@gmail.com", "Thestockedpantry@1234")
+            msg = EmailMessage()
+            subject = "Regarding Your Order"
+            message = "Dear " + str(a.user) + ",\n your order with order id " + str(a.order_id) + " was successfully placed.\n\nThank you for using The Stocked Pantry.\n\nRegards,\nThe Stocked Pantry"
+            msg.set_content(message)
+            msg['Subject'] = subject
+            msg['From'] = "wethestockedpantry@gmail.com"
+            msg['To'] = a.user.email
+            s.send_message(msg)
+            s.quit()
         else:
-            print('order was not successful because' + response_dict['RESPMSG'])
+            s = smtplib.SMTP('smtp.gmail.com', 587)
+            s.starttls() 
+            s.login("wethestockedpantry@gmail.com", "Thestockedpantry@1234")
+            msg = EmailMessage()
+            subject = "Regarding Your Order"
+            message = "Dear " + str(a.user) + ",\nWe regret to inform you that your order with order id " + str(a.order_id) + " was not successfull because " + response_dict['RESPMSG'] +  ".\n\nThank you for using The Stocked Pantry.\n\nRegards,\nThe Stocked Pantry"
+            msg.set_content(message)
+            msg['Subject'] = subject
+            msg['From'] = "wethestockedpantry@gmail.com"
+            msg['To'] = a.user.email
+            s.send_message(msg)
+            s.quit()
     return render(request, 'pantry/paymentstatus.html', {'response': response_dict})
 
 
 def Order_history(request):
-    return render(request, 'pantry/order.html')
+    order2 = []
+    order = Order.objects.filter(user = request.user)
+    order.reverse()
+    for i in order:
+        a = []
+        a.append(i.order_id)
+        l = Order_item.objects.filter(order_id = i)
+        productname = []
+        for j in l:
+            productname.append(Product.objects.get(p_id = j.p_id.p_id).p_name)
+        
+        pname = ''
+        for j in productname:
+            pname += j + ', '
+        a.append(pname[:-2])
+        a.append(i.date)
+        if i.cancelled == True:
+            a.append("Cancelled")
+        elif i.deliverred == True:
+            a.append("Delivered")
+        elif i.shipped == True:
+            a.append("Shipped")
+        else:
+            a.append("Processing")
+        a.append(i.order_amount)
+        order2.append(a)
+    return render(request, 'pantry/order.html', {'order': order2})
 
-
+def Order_cancel(request, idz):
+    order = Order.objects.get(order_id = idz)
+    order.cancelled = True
+    order.save()
+    s = smtplib.SMTP('smtp.gmail.com', 587)
+    s.starttls() 
+    s.login("wethestockedpantry@gmail.com", "Thestockedpantry@1234")
+    msg = EmailMessage()
+    subject = "Regarding Your Order Cancellation"
+    message = "Dear " + str(request.user) + ",\n your order with order id " + str(idz) + " was cancelled"
+    msg.set_content(message)
+    msg['Subject'] = subject
+    msg['From'] = "wethestockedpantry@gmail.com"
+    msg['To'] = request.user.email
+    s.send_message(msg)
+    s.quit()
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 """
 
 def order(request):
