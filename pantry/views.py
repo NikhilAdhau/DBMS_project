@@ -15,7 +15,7 @@ from django.http import HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
 from PayTm import Checksum
 
-MERCHANT_KEY = 'Your Merchant Key'
+MERCHANT_KEY = 'MERCHANT_KEY'
 
 def index(request):
     allProds = []
@@ -193,6 +193,8 @@ def cart(request,idz, typer):
         price = Product.objects.get(p_id = car.p_id.p_id).price
         sum1 = sum1 + price * car.prod_quantity
         cart.total_cost = sum1
+    cart.save()
+    print(cart.total_cost)
     cart_qs = zip(product, cart_qs)
     return render(request, 'pantry/cart.html', {'cart1': cart_qs, 'sum' : sum1, 'cart':len(Cart_item.objects.filter(cart_id = cart.cart_id))})
 
@@ -258,38 +260,37 @@ def update_wishlist(request, idz, typer):
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 def search_results(request):
-	if(request.user.is_authenticated):
-		carx = len(Cart_item.objects.filter(cart_id = Cart.objects.get(user = request.user)))
-	else : 
-		carx = None
-	search = request.GET.get('Search', 'default')
-	products = Product.objects.all()
-	a = []
+    if request.user.is_authenticated:
+        if len(Cart.objects.filter(user = request.user)):
+            carx = len(Cart_item.objects.filter(cart_id = Cart.objects.get(user = request.user)))
+        else:
+            carx = None
+    else: 
+        carx = None
+    search = request.GET.get('Search', 'default')
+    products = Product.objects.all()
+    a = []
 
-	for i in products:
-		if re.search(search, i.p_name, re.IGNORECASE):
-			a.append(i)
-	params = {'list': a, 'cart': carx}
-	return render(request, 'pantry/search.html', params)
+    for i in products:
+        if re.search(search, i.p_name, re.IGNORECASE):
+            a.append(i)
+    params = {'list': a, 'cart': carx}
+    return render(request, 'pantry/search.html', params)
 
 @login_required
 def checkout(request):
     if request.method=="POST":
-        items_json = request.POST.get('itemsJson', '')
-        name = request.POST.get('name', '')
-        amount = request.POST.get('amount', '')
-        email = request.POST.get('email', '')
         address = request.POST.get('address1', '') + " " + request.POST.get('address2', '')
         city = request.POST.get('city', '')
         state = request.POST.get('state', '')
         zip_code = request.POST.get('zip_code', '')
         phone = request.POST.get('phone', '')
 
-        order = Order.objects.create(user = request.user, order_amount = Cart.objects.get(user=request.user).total_cost)
+        order = Order.objects.create(user = request.user, order_amount = Cart.objects.get(user=request.user).total_cost, order_address=address, order_city=city, order_state=state, order_phone=phone)
         cartitem = Cart_item.objects.filter(cart_id = Cart.objects.get(user = request.user))
         for i in cartitem:
-            Order_item = Order_item.objects.create(order_id = order, p_id = Product.objects.get(p_id = i.p_id))
-            Order_quant = Order_quantity.objects.create(order_id = order, p_id = Product.objects.get(p_id = i.p_id))
+            Order_item.objects.create(order_id = order, p_id = Product.objects.get(p_id = i.p_id.p_id))
+            Order_quantity.objects.create(order_id = order, p_id = Product.objects.get(p_id = i.p_id.p_id), quantity=i.prod_quantity)
         
         #order = Orders(items_json=items_json, name=name, email=email, address=address, city=city, state=state, zip_code=zip_code, phone=phone, amount=amount)
         #order.save()
@@ -302,9 +303,9 @@ def checkout(request):
         
         param_dict={
 
-                'MID': 'Merchant_id',
+                'MID': 'MERCHANT_ID',
                 'ORDER_ID': str(order.order_id),
-                'TXN_AMOUNT': str(order.order_amount),
+                'TXN_AMOUNT': '1',
                 'CUST_ID': request.user.email,
                 'INDUSTRY_TYPE_ID': 'Retail',
                 'WEBSITE': 'WEBSTAGING',
@@ -315,9 +316,11 @@ def checkout(request):
         param_dict['CHECKSUMHASH'] = Checksum.generate_checksum(param_dict, MERCHANT_KEY)
         
         return  render(request, 'pantry/paytm.html', {'param_dict': param_dict})
-    return render(request, 'pantry/checkout.html')
+    return render(request, 'pantry/checkout.html', {'totalprice': Cart.objects.get(user = request.user).total_cost})
+
 
 @csrf_exempt
+#@login_required
 def handlerequest(request):
     form = request.POST
     response_dict = {}
@@ -330,63 +333,18 @@ def handlerequest(request):
     if verify:
         if response_dict['RESPCODE'] == '01':
             print('order successful')
-            Order.objects.get(user = request.user, order_id = response_dict['ORDERID']).order_success = True
+            a = Order.objects.get(order_id = int(response_dict['ORDERID']))
+            a.order_success = True
+            a.save()
+            Cart.objects.get(total_cost = a.order_amount).delete()
         else:
             print('order was not successful because' + response_dict['RESPMSG'])
     return render(request, 'pantry/paymentstatus.html', {'response': response_dict})
 
-"""
 
+def Order_history(request):
+    return render(request, 'pantry/order.html')
 
-
-def search_results(request):
-	if(request.user.is_authenticated):
-		carx = len(Cart.objects.filter(user=request.user))
-	else : 
-		carx = None
-	search = request.GET.get('Search', 'default')
-	products = Product.objects.all()
-	a = []
-
-	for i in products:
-		if re.search(search, i.product_name, re.IGNORECASE):
-			a.append(i)
-	params = {'list': a, 'cart': carx}
-	return render(request, 'shop/search.html', params)
-
-
-def about(request):
-	if(request.user.is_authenticated):
-		carx = len(Cart.objects.filter(user=request.user))
-	else : 
-		carx = None
-	return render(request, 'shop/about.html')
-
-
-def contact(request):
-	if(request.user.is_authenticated):
-		carx = len(Cart.objects.filter(user=request.user))
-	else : 
-		carx = None
-	return HttpResponse('we are at contact')
-
-
-def tracker(request):
-	if(request.user.is_authenticated):
-		carx = len(Cart.objects.filter(user=request.user))
-	else : 
-		carx = None
-	return HttpResponse('we are at tracker')
-
-
-def search(request):
-	if(request.user.is_authenticated):
-		carx = len(Cart.objects.filter(user=request.user))
-	else : 
-		carx = None
-	return HttpResponse('we are at search')
-
-"""
 
 """
 

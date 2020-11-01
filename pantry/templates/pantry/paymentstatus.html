@@ -1,8 +1,6 @@
 {% extends 'pantry/basic.html' %}
-{% block title%} The Stocked Pantry Tracker{% endblock %}
 {% block body %}
 <div class="container">
-    {{response}}
     <div class="col my-4">
 
         <h2>Payment status regarding your order Id {{response.ORDERID}}</h2>
@@ -15,8 +13,4 @@
     </div>
 
 </div>
-{% endblock %}
-{% block js %}
-<script>
-</script>
 {% endblock %}

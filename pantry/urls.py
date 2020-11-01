@@ -19,6 +19,8 @@ urlpatterns = [
 	path('checkout/', views.checkout, name='Checkout'),
 	path('handlerequest/', views.handlerequest, name='Handlerequest'),
 	path('search_results/', views.search_results, name = 'search_results'),
+	path('orders/', views.Order_history, name = 'order'),
+
 ]
 
 """ path('grocery/', views.grocery, name = 'Grocery'),

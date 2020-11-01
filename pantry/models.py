@@ -33,7 +33,13 @@ class Order(models.Model):
     order_success = models.BooleanField(default=False)
     date = models.DateTimeField(default=django.utils.timezone.now)
     order_amount = models.IntegerField(default = 0)
-    
+    order_address = models.CharField(max_length = 500, default = '')
+    order_city = models.CharField(max_length = 50, default = '')
+    order_state = models.CharField(max_length = 50, default = '')
+    order_phone = models.BigIntegerField(default = 0000000000)
+
+
+
 class Order_item(models.Model):
     order_id = models.ForeignKey('Order', on_delete = models.CASCADE, default=None)
     p_id = models.ForeignKey('Product', on_delete = models.CASCADE, default=None)
@@ -44,7 +50,7 @@ class Order_item(models.Model):
 class Order_quantity(models.Model):
     order_id = models.ForeignKey('Order', on_delete = models.CASCADE, default=None)
     p_id = models.ForeignKey('Product', on_delete = models.CASCADE, default=None)
-    quantity = models.IntegerField()
+    quantity = models.IntegerField(default=1)
 
 class Wishlist(models.Model):
     wishlist_id = models.AutoField(primary_key = True)
