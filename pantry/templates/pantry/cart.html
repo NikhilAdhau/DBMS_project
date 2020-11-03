@@ -12,6 +12,15 @@
 <h1 class="text-center mt-5">Cart</h1>
 <!--    <div class = "container">-->
 <!--      <div class="card-deck" style = "width: 70rem;">-->
+{% comment %}
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li {% if message.tags %} class=" {{ message.tags }} " {% endif %}> {{ message }} </li>
+    {% endfor %}
+</ul>
+{% endif %}
+{% endcomment %}
     {% if cart1 %}
     <div class = "container mt-4">
       <div class="row">
@@ -25,9 +34,13 @@
         <div class="card-body">
           <h5 class="card-title">{{prod.p_name}}</h5>
             <p class="card-text">Price - ₹ {{prod.price}}/kg</p>
-            <p class="card-text">Quantity - {{cart.prod_quantity}} kg</p>
 
-    <a href="{% url 'cart' idz=cart.p_id.p_id typer='delete' %}" class="btn btn-primary">Remove from Cart</a>
+    <a href="{% url 'update_cart' idz=cart.p_id.p_id typer='add' %}" class="btn btn-primary">+</a>
+    {{cart.prod_quantity}}kg
+    <a href="{% url 'update_cart' idz=cart.p_id.p_id typer='sub' %}" class="btn btn-primary">-</a>
+    <br><br>
+    <a href="{% url 'update_cart' idz=cart.p_id.p_id typer='delete' %}" class="btn btn-primary">Remove from Cart</a>
+    <a href="{% url 'update_cart' idz=cart.p_id.p_id typer='save' %}" class="btn btn-primary">Save for later</a>
 
         </div>
       </div>
@@ -42,12 +55,14 @@
     </div>
     <h4 class="text-sm-center mt-5">Total Price: {{ sum }}</h4>
     <div class = "lead">
-    <h4 class="text-sm-center mr-5 pr-5 mt-5">Payment Option : <input type="checkbox" name="check" checked>
-      <label for="check">Pay on delivery</label></h4> 
+    {% if sum != 0 %}
+    <h4 class="text-sm-center mr-5 pr-5 mt-5">Payment Option :
+      <label>Paytm</label></h4> 
     </div>
         <div class="text-sm-center mt-5">
           
-          <a href="#" class="btn btn-success my-5" style = "width : 250px;">Place Order</a>
+            <a href="{% url 'Checkout' %}" class="btn btn-success my-5" style = "width : 250px;">Proceed to Checkout</a>
+          {% endif %}
     {% else %}
         <h4 class="text-sm-center mt-5">Cart is empty</h4>
     {% endif %}

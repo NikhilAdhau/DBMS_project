@@ -7,6 +7,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<link rel="shortcut icon" href="/media/shop/images/favorite-cart.png" type="image/x-icon">
 	<!-- Bootstrap CSS -->
+	 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
 		integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
 		<!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"> -->
@@ -101,9 +102,6 @@
 	
 	<div class="collapse navbar-collapse" id="navbarSupportedContent">
 		<ul class="navbar-nav mr-auto">
-<!--			<li class="nav-item active">-->
-<!--				<a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>-->
-<!--			</li>-->
 
 			<li class="nav-item dropdown">
 				<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
@@ -111,10 +109,9 @@
 				Categories
 			</a>
 			<div class="dropdown-menu" aria-labelledby="navbarDropdown">
-				<a class="dropdown-item" href="#">Grocery</a>
-				<a class="dropdown-item" href="#">Vegetables</a>
-<!--				<div class="dropdown-divider"></div>-->
-				<a class="dropdown-item" href="#">Fruits</a>
+				<a class="dropdown-item" href="{% url 'Grocery' %}">Grocery</a>
+				<a class="dropdown-item" href="{% url 'Vegetables' %}">Vegetables</a>
+				<a class="dropdown-item" href="{% url 'Fruits' %}">Fruits</a>
 			</div>
 		</li>
 		
@@ -131,8 +128,16 @@
 		{% if user.is_authenticated %}
 
 		<div class="nav-item ">
-			<a class="nav-link" href="#"><img class="rounded-circle article-img" src="{{ request.user.profile.image.url }}" style="width:25px;"></a></div>
-
+			<a class="nav-link" href="#"><img class="rounded-circle article-img" src="{{ request.user.profile.image.url }}" style="width:25px;"></a>
+		</div>
+		<div class="nav-item">
+			<b style="color:white;"> Hello {{user.first_name}} </b>
+		</div>
+		<div class="nav-item ">
+			<a class="nav-link btn btn-default btn-sm" style="color:white;font-size:medium"  href="{% url 'wishlist' idz=0 typer='none2' %}">
+				Wishlist<i class='fas fa-cart-arrow-down'></i>
+			  </a>
+		</div>
 		<div class="nav-item ">
 			<a class="nav-link btn btn-default btn-sm" style="color:white;font-size:medium"  href="{% url 'cart' idz=0 typer='none2' %}">
 				Cart<i class='fas fa-cart-arrow-down'></i>({{cart}})
@@ -162,12 +167,11 @@
 	
 	<div class="overlay-content">
 		<span class="" style="font-size:1.5rem;cursor:pointer;color:#f1f1f1;position:absolute;left:9%;top:5%;" onclick="closeNav()">&#9776;</span>
-		{% if user.is_authenticated %}	
-		<a  href="#"><img class="rounded-circle article-img" src="#" id="img" style="width:40px;"><b><small>&nbsp; {{request.user}}</small></b></a>
-		{% endif %}
-	  <a href="$">About</a>
-	  <a href="#">Wishlist</a>
-	  <a href="#">My Orders</a>
+	  <!-- <a href="#">Wishlist</a> -->
+	  {% if user.is_authenticated %}
+	  <a href="{% url 'profile' %}">My Account</a>
+	  <a href="{% url 'order' %}">My Orders</a>
+	  {% endif %}
 	  <a href="https://node-red-hpdbp.mybluemix.net/ui/">Our Assistant</a>
 	</div>
   </div>
@@ -295,14 +299,25 @@ function closeNav() {
 
 
 
+	{% if messages %}
+		<div class="alert alert-success" id="success-alert">
+			<button type="button" class="close" data-dismiss="alert">x</button>
+			{% for message in messages %}
+			<center>
+				<strong> {{ message }}</strong>
+			</center>
+			{% endfor %}
+		</div>
 
-		{% if messages %}
-			<div style="border: 1px solid black; width:50%; margin-left:25%; margin-left:25%; padding:10px; margin-top:20px; background-color: rgba(21, 151, 0, 1); color: rgb(255, 255, 255);">
-                {% for message in messages %}
-                    {{ message }}
-                {% endfor %}</div>
-		{% endif %}
+		    <script type="text/javascript">
+			setTimeout(function () {
 
+			    // Closing the alert
+			    $('.alert').alert('close');
+			}, 2000);
+		    </script>
+	{% endif %}
+	
 {% block body %}
 {% endblock %}
 

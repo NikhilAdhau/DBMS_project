@@ -1,0 +1,31 @@
+{% extends 'pantry/basic.html' %}
+
+{% block body %}
+<div class="jumbotron vertical-center">
+<div class="container" style=" border-radius: 5px; width: 50%; margin:auto; float: none; ">
+  <h2>Account Details</h2>
+  <br>
+  <table class="table ">
+    <thead>
+      <tr>
+        <td>Name</td>
+	<td>{{user.first_name}} {{user.last_name}}</td>
+      </tr>
+    </thead>
+    <thead>
+      <tr>
+        <td>Username</td>
+	<td>{{user.username}} </td>
+      </tr>
+    </thead>
+    <thead>
+      <tr>
+        <td>Email</td>
+	<td>{{user.email}}</td>
+      </tr>
+    </thead>
+  </table>
+</div>
+</div>
+
+{% endblock %}

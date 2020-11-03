@@ -19,21 +19,28 @@
         
         <div class="card-group" >
         
-        <img class="card-img-top" src="/media/{{i.image}}" alt="Card image cap">
+        <img class="card-img-top" src="/media/{{i.0.image}}" alt="Card image cap">
         <div class="card-body">
-            <h5 class="card-title">{{i.product_name}}</h5>
-            <p class="card-text">Price - ₹ {{i.price}}/kg</p>
+            <h5 class="card-title">{{i.0.p_name}}</h5>
+            <p class="card-text">Price - ₹ {{i.0.price}}/kg</p>
       {%if prod_id %}
-          <h1>Manihs</h1>
           {% for k in prod_id %}
             {% if k.p_id == i.p_id %}
               <a href="{% url 'cart' idz=i.p_id typer='add' %}" class="btn btn-primary">Added to Cart</a>
             {% endif %}
           {% endfor %}
       {% else %}
-      <h2>fjkdjf</h2>
-        <a href="{% url 'cart' idz=i.p_id typer='add' %}" class="btn btn-primary">Add to Cart</a>
-        <a href="{% url 'wishlist' idz=i.p_id typer='add' quant=0 %}" class="btn btn-primary">Add to Wishlist</a>
+      {% if i.1 == False %}
+        <a href="{% url 'update_cart' idz=i.0.p_id typer='add' %}" class="btn btn-primary" id = 'add_to_cart'>Add to Cart</a>
+	{% else %}
+	<a  href = " {%url 'cart' idz=0 typer='none2' %}" class="btn btn-primary" id = 'add_to_cart'>Go to cart</a>
+	{% endif %}
+	{% if i.2 == False %}
+        <a href="{% url 'update_wishlist' idz=i.0.p_id typer='add'%}" class="btn btn-primary">Add to Wishlist</a>
+	{% else %}
+	<a  href = " {%url 'wishlist' idz=0 typer='none2' %}" class="btn btn-primary" id = 'add_to_cart'>Go to wishlist</a>
+	{% endif %}
+
 			{% endif %}
         </div>
       </div>
@@ -45,4 +52,5 @@
 {% endif %}
         </div>
     </div>
+  
 {% endblock %}
